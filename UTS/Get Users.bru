@@ -1,0 +1,28 @@
+meta {
+  name: Get Users
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:5000/api/users?page_number=1&page_size=5&search=name:yy
+  body: json
+  auth: none
+}
+
+query {
+  page_number: 1
+  page_size: 5
+  search: name:yy
+}
+
+headers {
+  Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNjYyNWQ1MGNiYzRmMTE4YTBhYmZmMzE0IiwiaWF0IjoxNzEzNzU3NTc3LCJleHAiOjE3MTM4NDM5Nzd9.FHeoM-xNBcmyTGX45OqPwEtKf6j2T7mQHrmlQZQHvNk
+}
+
+body:json {
+  {
+    "email": "admin@example.com",
+    "password" : "123456"
+  }
+}
