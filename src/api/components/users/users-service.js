@@ -23,10 +23,10 @@ async function getUsers() {
 
 /**
  * Get list of users with pagination and search and sort feature
- * * @param {string} page_number - Page Number
- * * @param {string} page_size - Page Size
- * * @param {string} search - Search
- * * @param {string} sort - Sort
+ * @param {string} page_number - Page Number
+ * @param {string} page_size - Page Size
+ * @param {string} search - Search
+ * @param {string} sort - Sort
  * @returns {Array}
  */
 async function getUsersPagination(page_number, page_size, search, sort) {
