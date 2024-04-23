@@ -23,6 +23,10 @@ async function getUsers() {
 
 /**
  * Get list of users with pagination and search and sort feature
+ * * @param {string} page_number - Page Number
+ * * @param {string} page_size - Page Size
+ * * @param {string} search - Search
+ * * @param {string} sort - Sort
  * @returns {Array}
  */
 async function getUsersPagination(page_number, page_size, search, sort) {
@@ -38,13 +42,13 @@ async function getUsersPagination(page_number, page_size, search, sort) {
   if (search) {
     const searchFields = search.split(':');
     const searchField = searchFields[0];
-    const searchValue = searchFields[1];
+    const searchKey = searchFields[1];
 
     if (searchField === 'email'){
-      users = users.filter(user => user.email.toLowerCase().includes(searchValue.toLowerCase()));
+      users = users.filter(user => user.email.toLowerCase().includes(searchKey.toLowerCase()));
     }
     if (searchField === 'name'){
-      users = users.filter(user => user.name.toLowerCase().includes(searchValue.toLowerCase()));
+      users = users.filter(user => user.name.toLowerCase().includes(searchKey.toLowerCase()));
     }
   } else {
     // if search is not provided, don't filter the users
@@ -54,11 +58,12 @@ async function getUsersPagination(page_number, page_size, search, sort) {
   if (sort) {
     const sortFields = sort.split(':'); // Create new variable for sort parameters
     const sortField = sortFields[0].toLowerCase(); // Ensure consistent case
-    const sortValue = sortFields[1];
+    const sortOrder = sortFields[1];
+    
 
     users.sort((a, b) => {
       const comparisonValue = a[sortField].localeCompare(b[sortField]);
-      return sortValue === 'asc' ? comparisonValue : -comparisonValue; // Handle both asc and desc
+      return sortOrder === 'asc' ? comparisonValue : -comparisonValue; // Handle both asc and desc
     });
   }
 
