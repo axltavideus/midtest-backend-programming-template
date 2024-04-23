@@ -5,25 +5,18 @@ meta {
 }
 
 get {
-  url: http://localhost:5000/api/users?page_number=1&page_size=5&search=name:y&sort=email:asc
-  body: json
+  url: http://localhost:5000/api/users?page_number=1&page_size=5&search=email:y&sort=email:desc
+  body: formUrlEncoded
   auth: none
 }
 
 query {
   page_number: 1
   page_size: 5
-  search: name:y
-  sort: email:asc
+  search: email:y
+  sort: email:desc
 }
 
 headers {
   Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNjYyNWQ1MGNiYzRmMTE4YTBhYmZmMzE0IiwiaWF0IjoxNzEzODQ3MTAzLCJleHAiOjE3MTM5MzM1MDN9.CrKsISJ6K-idJsANaotzebj49ogSZoqlhNyAk238aVA
-}
-
-body:json {
-  {
-    "email": "admin@example.com",
-    "password" : "123456"
-  }
 }

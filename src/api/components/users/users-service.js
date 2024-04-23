@@ -57,12 +57,14 @@ async function getUsersPagination(page_number, page_size, search, sort) {
 
   if (sort) {
     const sortFields = sort.split(':'); // Create new variable for sort parameters
-    const sortField = sortFields[0].toLowerCase(); // Ensure consistent case
-    const sortOrder = sortFields[1];
-    
+    const sortField = sortFields[0].toLowerCase(); 
+    let sortOrder = sortFields[1];
 
     users.sort((a, b) => {
       const comparisonValue = a[sortField].localeCompare(b[sortField]);
+      if (sortFields[1] == null) {
+        return comparisonValue;
+      }
       return sortOrder === 'asc' ? comparisonValue : -comparisonValue; // Handle both asc and desc
     });
   }
