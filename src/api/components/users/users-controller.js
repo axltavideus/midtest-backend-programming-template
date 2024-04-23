@@ -51,8 +51,9 @@ async function getUsersPagination(request, response, next) {
     const page_size = parseInt(request.query.page_size);
     const page_number = parseInt(request.query.page_number);
     const search = request.query.search || '';
+    const sort = request.query.sort;
 
-    const userPage = await usersService.getUsersPagination(page_number, page_size, search);
+    const userPage = await usersService.getUsersPagination(page_number, page_size, search, sort);
 
     return response.status(200).json(userPage);
   } catch (error) {

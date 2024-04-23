@@ -25,7 +25,7 @@ async function getUsers() {
  * Get list of users with pagination and search and sort feature
  * @returns {Array}
  */
-async function getUsersPagination(page_number, page_size, search) {
+async function getUsersPagination(page_number, page_size, search, sort) {
   let users = await usersRepository.getUsers();
   if (isNaN(page_number)) {
     page_number = 1;
@@ -51,6 +51,17 @@ async function getUsersPagination(page_number, page_size, search) {
     search = '';
   }
 
+  if (sort) {
+    const sortFields = sort.split(':'); // Create new variable for sort parameters
+    const sortField = sortFields[0].toLowerCase(); // Ensure consistent case
+    const sortValue = sortFields[1];
+
+    users.sort((a, b) => {
+      const comparisonValue = a[sortField].localeCompare(b[sortField]);
+      return sortValue === 'asc' ? comparisonValue : -comparisonValue; // Handle both asc and desc
+    });
+  }
+
   const count = users.length;
 
   const totalpages = Math.ceil(users.length / page_size);
@@ -72,16 +83,8 @@ async function getUsersPagination(page_number, page_size, search) {
     });
   }
 
-  let has_next_page = new Boolean(false);
-  let has_previous_page = new Boolean(false);
-
-  if (endIndex < users.length) {
-    has_next_page = true;
-  } 
-
-  if (startIndex > 0) {
-    has_previous_page = true
-  } 
+  const has_next_page = endIndex < count;
+  const has_previous_page = startIndex > 0;
 
   return {
     totalpages, 
