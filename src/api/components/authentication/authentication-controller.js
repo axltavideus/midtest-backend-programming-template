@@ -1,4 +1,6 @@
 const { errorResponder, errorTypes } = require('../../../core/errors');
+const limiter = require('express-rate-limit');
+const logger = require('../../../core/logger')('app');
 const authenticationServices = require('./authentication-service');
 
 /**
@@ -19,12 +21,23 @@ async function login(request, response, next) {
     );
 
     if (!loginSuccess) {
+      var loginAttempt =+1;
+      if (loginAttempt > 4) {
+        response.loginAttempt;
+        logger.info('login attempt: ',loginAttempt);
+        throw errorResponder(
+          errorTypes.FORBIDDEN_ERROR,
+          'Too many failed login attempts.'
+        );
+      }
+
+      logger.info('login attempt: ');
       throw errorResponder(
         errorTypes.INVALID_CREDENTIALS,
         'Wrong email or password'
       );
     }
-
+    loginAttempt = 0;
     return response.status(200).json(loginSuccess);
   } catch (error) {
     return next(error);

@@ -17,6 +17,7 @@ async function checkLoginCredentials(email, password) {
   // guessing login credentials by looking at the processing time.
   const userPassword = user ? user.password : '<RANDOM_PASSWORD_FILLER>';
   const passwordChecked = await passwordMatched(password, userPassword);
+  var loginAttempt;
 
   // Because we always check the password (see above comment), we define the
   // login attempt as successful when the `user` is found (by email) and
