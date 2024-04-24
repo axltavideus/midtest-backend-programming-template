@@ -125,18 +125,23 @@ async function getAccountPage(page_number, page_size, search, sort) {
   
   if (search) {
     const searchFields = search.split(':');
-    const searchField = searchFields[0];
-    const searchKey = searchFields[1];
-
-    if (searchField === 'email'){
-      users = users.filter(user => user.email.toLowerCase().includes(searchKey.toLowerCase()));
-    }
-    if (searchField === 'name'){
-      users = users.filter(user => user.name.toLowerCase().includes(searchKey.toLowerCase()));
-    }
-    if (searchField === 'accNumber'){
-      users = users.filter(user => user.accNumber.includes(searchKey.toLowerCase()));
-    }
+    const searchField = searchFields[0].toLowerCase(); 
+    const searchKey = searchFields[1].toLowerCase(); 
+    
+    users = users.filter(user => {
+      switch (searchField) {
+        case 'email':
+          return user.email.toLowerCase().includes(searchKey);
+        case 'name':
+          return user.name.toLowerCase().includes(searchKey);
+        case 'balance':
+          return user.balance?.toString().includes(searchKey); 
+        case 'accNumber': 
+          return user.accNumber?.toString().includes(searchKey);
+        case 'accType': 
+          return user.accType.toLowerCase().includes(searchKey);
+      }
+    });
   } else {
     // if search is not provided, don't filter the users
     search = '';
