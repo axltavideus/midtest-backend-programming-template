@@ -24,6 +24,14 @@ module.exports = (app) => {
     usersControllers.createUser
   );
 
+  // Create user Account
+  route.post(
+    '/accounts',
+    authenticationMiddleware,
+    celebrate(usersValidator.createUserAccount),
+    usersControllers.createUserAccount
+  );
+
   // Get user detail
   route.get('/:id', authenticationMiddleware, usersControllers.getUser);
 

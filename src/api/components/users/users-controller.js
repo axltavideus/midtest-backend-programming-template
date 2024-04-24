@@ -130,6 +130,54 @@ async function createUser(request, response, next) {
 }
 
 /**
+ * Handle create user request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function createUserAccount(request, response, next) {
+  try {
+    const name = request.body.name;
+    const email = request.body.email;
+    const accNumber = request.body.accNumber;
+    const balance = request.body.balance;
+    const accType = request.body.accType;
+    const password = request.body.password;
+    const password_confirm = request.body.password_confirm;
+
+    // Check confirmation password
+    if (password !== password_confirm) {
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Password confirmation mismatched'
+      );
+    }
+
+    // Email must be unique
+    const emailIsRegistered = await usersService.emailIsRegistered(email);
+    if (emailIsRegistered) {
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'Email is already registered'
+      );
+    }
+
+    const success = await usersService.createUserAccount(name, email, password, accNumber, balance, accType);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to create user'
+      );
+    }
+
+    return response.status(200).json({ name, email });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
  * Handle update user request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -148,6 +196,15 @@ async function updateUser(request, response, next) {
       throw errorResponder(
         errorTypes.EMAIL_ALREADY_TAKEN,
         'Email is already registered'
+      );
+    }
+
+    // Account number must be unique
+    const numberIsTaken = await usersService.numberTaken(email);
+    if (numberIsTaken) {
+      throw errorResponder(
+        errorTypes.NUMBER_ALREADY_TAKEN,
+        'Account number is already registered'
       );
     }
 
@@ -280,6 +337,7 @@ module.exports = {
   getUsersPagination,
   getAccountPage,
   createUser,
+  createUserAccount,
   updateUser,
   updateUserAccount,
   deleteUser,

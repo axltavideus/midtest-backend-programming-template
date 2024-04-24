@@ -127,7 +127,7 @@ async function getAccountPage(page_number, page_size, search, sort) {
     const searchFields = search.split(':');
     const searchField = searchFields[0].toLowerCase(); 
     const searchKey = searchFields[1].toLowerCase(); 
-    
+
     users = users.filter(user => {
       switch (searchField) {
         case 'email':
@@ -241,6 +241,26 @@ async function createUser(name, email, password) {
 }
 
 /**
+ * Create new user Account
+ * @param {string} name - Name
+ * @param {string} email - Email
+ * @param {string} password - Password
+ * @returns {boolean}
+ */
+async function createUserAccount(name, email, password, accNumber, balance, accType) {
+  // Hash password
+  const hashedPassword = await hashPassword(password);
+
+  try {
+    await usersRepository.createUser(name, email, hashedPassword, accNumber, balance, accType);
+  } catch (err) {
+    return null;
+  }
+
+  return true;
+}
+
+/**
  * Update existing user
  * @param {string} id - User ID
  * @param {string} name - Name
@@ -326,6 +346,21 @@ async function emailIsRegistered(email) {
 }
 
 /**
+ * Check whether the accNumber is registered
+ * @param {string} accNumber - Account Number
+ * @returns {boolean}
+ */
+async function numberTaken(accNumber) {
+  const user = await usersRepository.getUserByAccNumber(accNumber);
+
+  if (user) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Check whether the password is correct
  * @param {string} userId - User ID
  * @param {string} password - Password
@@ -370,10 +405,12 @@ module.exports = {
   getAccountPage,
   getUser,
   createUser,
+  createUserAccount,
   updateUser,
   updateUserAccount,
   deleteUser,
   emailIsRegistered,
+  numberTaken,
   checkPassword,
   changePassword,
 };

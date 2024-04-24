@@ -34,6 +34,27 @@ async function createUser(name, email, password) {
 }
 
 /**
+ * Create new user account
+ * @param {string} name - Name
+ * @param {string} email - Email
+ * @param {string} password - Hashed password
+ * @param {string} accNumber - Account Number
+ * @param {string} balance - Account Balance
+ * @param {string} accType - Account Type
+ * @returns {Promise}
+ */
+async function createUserAccount(name, email, password, accNumber, balance, accType) {
+  return User.create({
+    name,
+    email,
+    password,
+    accNumber,
+    balance,
+    accType,
+  });
+}
+
+/**
  * Update existing user
  * @param {string} id - User ID
  * @param {string} name - Name
@@ -97,6 +118,15 @@ async function getUserByEmail(email) {
 }
 
 /**
+ * Get user by email to prevent duplicate email
+ * @param {string} email - Email
+ * @returns {Promise}
+ */
+async function getUserByAccNumber(accNumber) {
+  return User.findOne({ accNumber });
+}
+
+/**
  * Update user password
  * @param {string} id - User ID
  * @param {string} password - New hashed password
@@ -110,9 +140,11 @@ module.exports = {
   getUsers,
   getUser,
   createUser,
+  createUserAccount,
   updateUser,
   updateUserAccount,
   deleteUser,
   getUserByEmail,
+  getUserByAccNumber,
   changePassword,
 };
