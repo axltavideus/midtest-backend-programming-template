@@ -32,11 +32,11 @@ async function login(request, response, next) {
       // Update user document with new login attempt count:
       await User.updateOne({ email }, { $set: { loginAttempt } });
 
-      if (loginAttempt > 2 && loginAttempt !== 3) {
+      if (loginAttempt > 4 && loginAttempt !== 5) {
         logger.info('User '+ users.email +' mencoba login, namun mendapat error 403 karena telah melebihi limit attempt');
         
         //Timeout user
-        await new Promise(resolve => setTimeout(resolve, 1 * 60 * 1000));
+        await new Promise(resolve => setTimeout(resolve, 30 * 60 * 1000));
         
         logger.info('User '+ users.email +' bisa mencoba login kembali karena sudah lebih dari 30 menit sejak pengenaan limit. Attempt di-reset kembali ke 0.');
         
@@ -49,7 +49,7 @@ async function login(request, response, next) {
           'Too many failed login attempts',
         ); 
       }
-      if (loginAttempt === 3) {
+      if (loginAttempt === 5) {
         logger.info('User '+ users.email +' gagal login. Attempt = '+loginAttempt+'. Limit Reached');
         throw errorResponder(
           errorTypes.FORBIDDEN,
