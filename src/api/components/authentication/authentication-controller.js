@@ -69,6 +69,7 @@ async function login(request, response, next) {
 
     loginAttempt = 0;
     logger.info('User '+ users.email +' berhasil login. ');
+    logger.info('User '+ users.email +' logout. ');
     return response.status(200).json(loginSuccess);
   } catch (error) {
     return next(error);
