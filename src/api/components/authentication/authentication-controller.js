@@ -15,43 +15,60 @@ async function login(request, response, next) {
   const { email, password } = request.body;
 
   try {
-    // 1. Check for existing user and failed login count:
-    const user = await authenticationRepository.getUserByEmail(email); 
+    // Check for existing user and failed login count:
+    const users = await authenticationRepository.getUserByEmail(email); 
     let loginAttempt = 0;
 
-    if (user) {
-      loginAttempt = user.loginAttempt || 0; // Initialize loginAttempt from user document or set to 0 if not found
+    if (users) {
+      loginAttempt = users.loginAttempt || 0; // Initialize loginAttempt from user document or set to 0 if not found
     }
 
-    // 2. Check login credentials:
+    // Check login credentials:
     const loginSuccess = await authenticationServices.checkLoginCredentials(email, password);
 
     if (!loginSuccess) {
       loginAttempt++; // Increment loginAttempt on failure
 
-      // 3. Update user document with new login attempt count:
+      // Update user document with new login attempt count:
       await User.updateOne({ email }, { $set: { loginAttempt } });
 
-      logger.info('login attempt: '+ loginAttempt);
-
-      if (loginAttempt > 4) {
+      if (loginAttempt > 2 && loginAttempt !== 3) {
+        logger.info('User '+ users.email +' mencoba login, namun mendapat error 403 karena telah melebihi limit attempt');
+        
+        //Timeout user
+        await new Promise(resolve => setTimeout(resolve, 1 * 60 * 1000));
+        
+        logger.info('User '+ users.email +' bisa mencoba login kembali karena sudah lebih dari 30 menit sejak pengenaan limit. Attempt di-reset kembali ke 0.');
+        
+        //Reset loginAttempt after 30 minutes
+        loginAttempt = 0;
+        await User.updateOne({ email }, { $set: { loginAttempt: 0 } });
+        
         throw errorResponder(
-          errorTypes.FORBIDDEN_ERROR,
-          'Too many failed login attempts.'
+          errorTypes.FORBIDDEN,
+          'Too many failed login attempts',
+        ); 
+      }
+      if (loginAttempt === 3) {
+        logger.info('User '+ users.email +' gagal login. Attempt = '+loginAttempt+'. Limit Reached');
+        throw errorResponder(
+          errorTypes.FORBIDDEN,
+          'Too many failed login attempts,'+ email + 'login attempts: ' + loginAttempt + ', tunggu 30 menit',
         );
       } else {
+        logger.info('User '+ users.email +' gagal login. Attempt: '+ loginAttempt);
         throw errorResponder(
           errorTypes.INVALID_CREDENTIALS, 
-          'Wrong email or password'
+          'Wrong email or password, '+ email + 'login attempts: ' + loginAttempt
         );
       }
     }
-
-    // 4. Reset login attempt on success:
+      
+    // Reset login attempt on success:
     await User.updateOne({ email }, { $set: { loginAttempt: 0 } });
 
     loginAttempt = 0;
-    logger.info('login reset: '+ loginAttempt);
+    logger.info('User '+ users.email +' berhasil login. ');
     return response.status(200).json(loginSuccess);
   } catch (error) {
     return next(error);
