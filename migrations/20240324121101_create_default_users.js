@@ -6,6 +6,9 @@ const name = 'Administrator';
 const email = 'admin@example.com';
 const password = '123456';
 const loginAttempt = 0;
+const accNumber = 1234567;
+const balance = 1000000;
+const accType = 'savings';
 
 logger.info('Creating default users');
 
@@ -26,6 +29,9 @@ logger.info('Creating default users');
       email,
       password: hashedPassword,
       loginAttempt,
+      accNumber,
+      balance,
+      accType,
     });
   } catch (e) {
     logger.error(e);
