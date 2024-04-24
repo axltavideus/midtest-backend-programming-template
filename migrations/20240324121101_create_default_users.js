@@ -5,6 +5,7 @@ const { hashPassword } = require('../src/utils/password');
 const name = 'Administrator';
 const email = 'admin@example.com';
 const password = '123456';
+const loginAttempt = 0;
 
 logger.info('Creating default users');
 
@@ -24,6 +25,7 @@ logger.info('Creating default users');
       name,
       email,
       password: hashedPassword,
+      loginAttempt,
     });
   } catch (e) {
     logger.error(e);
