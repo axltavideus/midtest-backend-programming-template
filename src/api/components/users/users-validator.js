@@ -30,6 +30,16 @@ module.exports = {
     },
   },
 
+  updateUserAccount: {
+    body: {
+      name: joi.string().min(1).max(100).required().label('Name'),
+      email: joi.string().email().required().label('Email'),
+      accNumber: joi.number().required().label('Account Number'),
+      balance: joi.number().required().label('Account Balance'),
+      accType: joi.string().required().label('Account Type'),
+    },
+  },
+
   changePassword: {
     body: {
       password_old: joi.string().required().label('Old password'),

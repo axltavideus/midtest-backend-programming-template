@@ -1,0 +1,25 @@
+meta {
+  name: Update Account
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:5000/api/users/accounts/6625d50cbc4f118a0abff314
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNjYyNWQ1MGNiYzRmMTE4YTBhYmZmMzE0IiwiaWF0IjoxNzEzOTU0NzIwLCJleHAiOjE3MTQwNDExMjB9.krMXBmcEAu8EBT7IBlIzg051r-yg2sMrrmqO0QsX9gw
+}
+
+body:json {
+  {
+    "name": "Administrator",
+    "email": "admin@example.com",
+    "accNumber": 1234567,
+    "balance": 100000000,
+    "accType": "savings"
+  }
+}

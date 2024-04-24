@@ -106,7 +106,7 @@ async function getUsersPagination(page_number, page_size, search, sort) {
 }
 
 /**
- * Get list of users with pagination and search and sort feature
+ * Get list of users accounts with pagination and search and sort feature
  * @param {string} page_number - Page Number
  * @param {string} page_size - Page Size
  * @param {string} search - Search
@@ -133,6 +133,9 @@ async function getAccountPage(page_number, page_size, search, sort) {
     }
     if (searchField === 'name'){
       users = users.filter(user => user.name.toLowerCase().includes(searchKey.toLowerCase()));
+    }
+    if (searchField === 'accNumber'){
+      users = users.filter(user => user.accNumber.includes(searchKey.toLowerCase()));
     }
   } else {
     // if search is not provided, don't filter the users
@@ -257,6 +260,30 @@ async function updateUser(id, name, email) {
 }
 
 /**
+ * Update existing user
+ * @param {string} id - User ID
+ * @param {string} name - Name
+ * @param {string} email - Email
+ * @returns {boolean}
+ */
+async function updateUserAccount(id, name, email, accNumber, balance, accType) {
+  const user = await usersRepository.getUser(id);
+
+  // User not found
+  if (!user) {
+    return null;
+  }
+
+  try {
+    await usersRepository.updateUserAccount(id, name, email, accNumber, balance, accType);
+  } catch (err) {
+    return null;
+  }
+
+  return true;
+}
+
+/**
  * Delete user
  * @param {string} id - User ID
  * @returns {boolean}
@@ -339,6 +366,7 @@ module.exports = {
   getUser,
   createUser,
   updateUser,
+  updateUserAccount,
   deleteUser,
   emailIsRegistered,
   checkPassword,

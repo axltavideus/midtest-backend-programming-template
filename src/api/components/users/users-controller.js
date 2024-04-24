@@ -166,6 +166,45 @@ async function updateUser(request, response, next) {
 }
 
 /**
+ * Handle update user request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function updateUserAccount(request, response, next) {
+  try {
+    const id = request.params.id;
+    const name = request.body.name;
+    const email = request.body.email;
+    const accNumber = request.body.accNumber;
+    const balance = request.body.balance;
+    const accType = request.body.accType;
+
+    // Email must be unique
+    const emailIsRegistered = await usersService.emailIsRegistered(email);
+    if (emailIsRegistered) {
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'Email is already registered'
+      );
+    }
+
+    const success = await usersService.updateUserAccount(id, name, email, accNumber, balance, accType);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to update user'
+      );
+    }
+
+    return response.status(200).json({ id });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
  * Handle delete user request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -242,6 +281,7 @@ module.exports = {
   getAccountPage,
   createUser,
   updateUser,
+  updateUserAccount,
   deleteUser,
   changePassword,
 };

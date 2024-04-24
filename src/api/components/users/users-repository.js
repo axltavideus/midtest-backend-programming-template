@@ -1,4 +1,5 @@
 const { User } = require('../../../models');
+const { accNumber, balance, accType } = require('../../../models/users-schema');
 
 /**
  * Get a list of users
@@ -54,6 +55,30 @@ async function updateUser(id, name, email) {
 }
 
 /**
+ * Update existing user
+ * @param {string} id - User ID
+ * @param {string} name - Name
+ * @param {string} email - Email
+ * @returns {Promise}
+ */
+async function updateUserAccount(id, name, email, accNumber, balance, accType) {
+  return User.updateOne(
+    {
+      _id: id,
+    },
+    {
+      $set: {
+        name,
+        email,
+        accNumber,
+        balance,
+        accType,
+      },
+    }
+  );
+}
+
+/**
  * Delete a user
  * @param {string} id - User ID
  * @returns {Promise}
@@ -86,6 +111,7 @@ module.exports = {
   getUser,
   createUser,
   updateUser,
+  updateUserAccount,
   deleteUser,
   getUserByEmail,
   changePassword,

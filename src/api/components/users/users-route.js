@@ -35,6 +35,14 @@ module.exports = (app) => {
     usersControllers.updateUser
   );
 
+  // Update user
+  route.put(
+    '/accounts/:id',
+    authenticationMiddleware,
+    celebrate(usersValidator.updateUserAccount),
+    usersControllers.updateUserAccount
+  );
+
   // Delete user
   route.delete('/:id', authenticationMiddleware, usersControllers.deleteUser);
 
