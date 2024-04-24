@@ -345,7 +345,7 @@ async function deleteUser(id) {
  * @param {string} accNumber - Account Number
  * @returns {boolean}
  */
-async function deleteUser(accNumber) {
+async function deleteUserAccount(accNumber) {
   const user = await usersRepository.getUserAccNumber(accNumber);
 
   // User not found
@@ -354,7 +354,7 @@ async function deleteUser(accNumber) {
   }
 
   try {
-    await usersRepository.deleteUserAccount(id);
+    await usersRepository.deleteUserAccount(accNumber);
   } catch (err) {
     return null;
   }
@@ -441,6 +441,7 @@ module.exports = {
   updateUser,
   updateUserAccount,
   deleteUser,
+  deleteUserAccount,
   emailIsRegistered,
   numberTaken,
   checkPassword,

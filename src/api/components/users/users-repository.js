@@ -123,7 +123,7 @@ async function deleteUser(id) {
  * @returns {Promise}
  */
 async function deleteUserAccount(accNumber) {
-  return User.deleteOne({ accNumber: accNumber });
+  return User.deleteOne({ _id: id }, {accNumber: accNumber});
 }
 
 /**

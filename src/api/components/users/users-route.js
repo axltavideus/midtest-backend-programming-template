@@ -55,7 +55,7 @@ module.exports = (app) => {
   route.delete('/:id', authenticationMiddleware, usersControllers.deleteUser);
 
   // Delete user with accNumber
-  route.delete('/accounts/:accNumber', authenticationMiddleware, usersControllers.deleteUserAccount);
+  route.delete('/accounts/:id', authenticationMiddleware, usersControllers.deleteUser);
 
   // Change password
   route.post(
