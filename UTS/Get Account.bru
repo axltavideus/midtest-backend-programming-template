@@ -1,0 +1,22 @@
+meta {
+  name: Get Account
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:5000/api/users/accounts?page_number=1&page_size=5&search=email:fer&sort=email:desc
+  body: none
+  auth: none
+}
+
+query {
+  page_number: 1
+  page_size: 5
+  search: email:fer
+  sort: email:desc
+}
+
+headers {
+  Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNjYyNWQ1MGNiYzRmMTE4YTBhYmZmMzE0IiwiaWF0IjoxNzEzOTU0NzIwLCJleHAiOjE3MTQwNDExMjB9.krMXBmcEAu8EBT7IBlIzg051r-yg2sMrrmqO0QsX9gw
+}

@@ -62,6 +62,29 @@ async function getUsersPagination(request, response, next) {
 }
 
 /**
+ * Handle get user detail request with pagination
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function getAccountPage(request, response, next) {
+  try {
+    //Extracts page_size and page_number from the query parameters.
+    const page_size = parseInt(request.query.page_size);
+    const page_number = parseInt(request.query.page_number);
+    const search = request.query.search || '';
+    const sort = request.query.sort;
+
+    const userPage = await usersService.getAccountPage(page_number, page_size, search, sort);
+
+    return response.status(200).json(userPage);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
  * Handle create user request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -216,6 +239,7 @@ module.exports = {
   getUsers,
   getUser,
   getUsersPagination,
+  getAccountPage,
   createUser,
   updateUser,
   deleteUser,

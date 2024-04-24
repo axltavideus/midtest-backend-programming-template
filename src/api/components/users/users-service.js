@@ -106,6 +106,93 @@ async function getUsersPagination(page_number, page_size, search, sort) {
 }
 
 /**
+ * Get list of users with pagination and search and sort feature
+ * @param {string} page_number - Page Number
+ * @param {string} page_size - Page Size
+ * @param {string} search - Search
+ * @param {string} sort - Sort
+ * @returns {Array}
+ */
+async function getAccountPage(page_number, page_size, search, sort) {
+  let users = await usersRepository.getUsers();
+  if (isNaN(page_number)) {
+    page_number = 1;
+  }
+
+  if (isNaN(page_size)) {
+    page_size = users.length;
+  }
+  
+  if (search) {
+    const searchFields = search.split(':');
+    const searchField = searchFields[0];
+    const searchKey = searchFields[1];
+
+    if (searchField === 'email'){
+      users = users.filter(user => user.email.toLowerCase().includes(searchKey.toLowerCase()));
+    }
+    if (searchField === 'name'){
+      users = users.filter(user => user.name.toLowerCase().includes(searchKey.toLowerCase()));
+    }
+  } else {
+    // if search is not provided, don't filter the users
+    search = '';
+  }
+
+  if (sort) {
+    const sortFields = sort.split(':'); // Create new variable for sort parameters
+    const sortField = sortFields[0].toLowerCase(); 
+    let sortOrder = sortFields[1];
+
+    users.sort((a, b) => {
+      const comparisonValue = a[sortField].localeCompare(b[sortField]);
+      if (sortFields[1] == null) {
+        return comparisonValue;
+      }
+      return sortOrder === 'asc' ? comparisonValue : -comparisonValue; // Handle both asc and desc
+    });
+  }
+
+  const count = users.length;
+
+  const totalpages = Math.ceil(users.length / page_size);
+
+  page_number = Math.min(page_number, totalpages)
+
+  const startIndex = (page_number - 1) * page_size;
+  const endIndex = Math.min(startIndex + page_size, users.length);
+
+  const paginatedUsers = users.slice(startIndex, endIndex);
+
+  const data = [];
+  for (let i = 0; i < paginatedUsers.length; i++) {
+    const user = paginatedUsers[i];
+    data.push({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      accNumber: user.accNumber,
+      accType: user.accType,
+      balance: user.balance,
+    });
+  }
+
+  const has_next_page = endIndex < count;
+  const has_previous_page = startIndex > 0;
+
+  return {
+    totalpages, 
+    page_number, 
+    page_size, 
+    count, 
+    totalpages, 
+    has_next_page, 
+    has_previous_page, 
+    data
+  };
+}
+
+/**
  * Get user detail
  * @param {string} id - User ID
  * @returns {Object}
@@ -248,6 +335,7 @@ async function changePassword(userId, password) {
 module.exports = {
   getUsers,
   getUsersPagination,
+  getAccountPage,
   getUser,
   createUser,
   updateUser,
