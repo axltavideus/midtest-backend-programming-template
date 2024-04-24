@@ -26,10 +26,7 @@ module.exports = {
   createUserAccount: {
     body: {
       name: joi.string().min(1).max(100).required().label('Name'),
-      email: joi.string().email().required().label('Email'),
-      accNumber: joi.number().required().label('Account Number'),
-      balance: joi.number().required().label('Account Balance'),
-      accType: joi.string().required().label('Account Type'), 
+      email: joi.string().email().required().label('Email'), 
       password: joiPassword
         .string()
         .minOfSpecialCharacters(1)
@@ -43,6 +40,9 @@ module.exports = {
         .required()
         .label('Password'),
       password_confirm: joi.string().required().label('Password confirmation'),
+      accNumber: joi.number().required().label('Account Number'),
+      balance: joi.number().required().label('Account Balance'),
+      accType: joi.string().required().label('Account Type'),
     },
   },
 

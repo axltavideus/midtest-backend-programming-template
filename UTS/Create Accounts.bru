@@ -1,11 +1,11 @@
 meta {
-  name: Update Account
+  name: Create Accounts
   type: http
-  seq: 6
+  seq: 7
 }
 
-put {
-  url: http://localhost:5000/api/users/6625d50cbc4f118a0abff314
+post {
+  url: http://localhost:5000/api/users/accounts
   body: json
   auth: none
 }
@@ -16,7 +16,12 @@ headers {
 
 body:json {
   {
-    "name": "Administrator",
-    "email": "admin@example.com"
+    "name":"f5",
+    "email":"f5@example.com",
+    "password":"123456Aa!",
+    "password_confirm":"123456Aa!",
+    "accNumber": 345567,
+    "balance": 1908909,
+    "accType": "investment"
   }
 }

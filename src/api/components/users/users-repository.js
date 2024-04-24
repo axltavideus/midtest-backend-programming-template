@@ -1,5 +1,4 @@
 const { User } = require('../../../models');
-const { accNumber, balance, accType } = require('../../../models/users-schema');
 
 /**
  * Get a list of users
@@ -16,6 +15,15 @@ async function getUsers() {
  */
 async function getUser(id) {
   return User.findById(id);
+}
+
+/**
+ * Get user detail with accNumber
+ * @param {string} accNumber - Account Number
+ * @returns {Promise}
+ */
+async function getUserAccNumber(accNumber) {
+  return User.findById(accNumber);
 }
 
 /**
@@ -43,11 +51,12 @@ async function createUser(name, email, password) {
  * @param {string} accType - Account Type
  * @returns {Promise}
  */
-async function createUserAccount(name, email, password, accNumber, balance, accType) {
+async function createUserAccount(name, email, password, loginAttempt, accNumber, balance, accType) {
   return User.create({
     name,
     email,
     password,
+    loginAttempt,
     accNumber,
     balance,
     accType,
@@ -109,6 +118,15 @@ async function deleteUser(id) {
 }
 
 /**
+ * Delete a user from account number
+ * @param {string} accNumber - Account Number
+ * @returns {Promise}
+ */
+async function deleteUserAccount(accNumber) {
+  return User.deleteOne({ accNumber: accNumber });
+}
+
+/**
  * Get user by email to prevent duplicate email
  * @param {string} email - Email
  * @returns {Promise}
@@ -139,11 +157,13 @@ async function changePassword(id, password) {
 module.exports = {
   getUsers,
   getUser,
+  getUserAccNumber,
   createUser,
   createUserAccount,
   updateUser,
   updateUserAccount,
   deleteUser,
+  deleteUserAccount,
   getUserByEmail,
   getUserByAccNumber,
   changePassword,

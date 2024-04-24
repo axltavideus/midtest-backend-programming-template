@@ -1,5 +1,7 @@
 const usersService = require('./users-service');
+const usersRepository = require('./users-repository');
 const { errorResponder, errorTypes } = require('../../../core/errors');
+const { loginAttempt } = require('../../../models/users-schema');
 
 /**
  * Handle get list of users request
@@ -141,6 +143,7 @@ async function createUserAccount(request, response, next) {
     const name = request.body.name;
     const email = request.body.email;
     const accNumber = request.body.accNumber;
+    const loginAttempt = 0;
     const balance = request.body.balance;
     const accType = request.body.accType;
     const password = request.body.password;
@@ -163,7 +166,7 @@ async function createUserAccount(request, response, next) {
       );
     }
 
-    const success = await usersService.createUserAccount(name, email, password, accNumber, balance, accType);
+    const success = await usersService.createUserAccount(name, email, password,loginAttempt, accNumber, balance, accType);
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
@@ -171,7 +174,11 @@ async function createUserAccount(request, response, next) {
       );
     }
 
-    return response.status(200).json({ name, email });
+    const User = await usersRepository.getUserByEmail(email);
+
+    await User.updateOne({ email }, { $set: { loginAttempt: 0 } });
+
+    return response.status(200).json({ name, email, accNumber, balance, accType});
   } catch (error) {
     return next(error);
   }
@@ -287,6 +294,31 @@ async function deleteUser(request, response, next) {
 }
 
 /**
+ * Handle delete user request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function deleteUserAccount(request, response, next) {
+  try {
+    const accNumber = request.params.accNumber;
+
+    const success = await usersService.deleteUserAccount(accNumber);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to delete user'
+      );
+    }
+
+    return response.status(200).json({ accNumber });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
  * Handle change user password request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -341,5 +373,6 @@ module.exports = {
   updateUser,
   updateUserAccount,
   deleteUser,
+  deleteUserAccount,
   changePassword,
 };

@@ -1,4 +1,5 @@
 const usersRepository = require('./users-repository');
+const { User } = require('../../../models');
 const { hashPassword, passwordMatched } = require('../../../utils/password');
 
 /**
@@ -136,9 +137,9 @@ async function getAccountPage(page_number, page_size, search, sort) {
           return user.name.toLowerCase().includes(searchKey);
         case 'balance':
           return user.balance?.toString().includes(searchKey); 
-        case 'accNumber': 
+        case 'accnumber': 
           return user.accNumber?.toString().includes(searchKey);
-        case 'accType': 
+        case 'acctype': 
           return user.accType.toLowerCase().includes(searchKey);
       }
     });
@@ -247,18 +248,27 @@ async function createUser(name, email, password) {
  * @param {string} password - Password
  * @returns {boolean}
  */
-async function createUserAccount(name, email, password, accNumber, balance, accType) {
-  // Hash password
+async function createUserAccount(name, email, password, loginAttempt, accNumber, balance, accType) {
   const hashedPassword = await hashPassword(password);
 
+  const newUser = new User({
+    name,
+    email,
+    password: hashedPassword,
+    loginAttempt,
+    accNumber,
+    balance,
+    accType,
+  });
+  
   try {
-    await usersRepository.createUser(name, email, hashedPassword, accNumber, balance, accType);
+    await newUser.save(); // Save the new user document
+    return true;
   } catch (err) {
     return null;
   }
-
-  return true;
 }
+
 
 /**
  * Update existing user
@@ -323,6 +333,28 @@ async function deleteUser(id) {
 
   try {
     await usersRepository.deleteUser(id);
+  } catch (err) {
+    return null;
+  }
+
+  return true;
+}
+
+/**
+ * Delete user with account number
+ * @param {string} accNumber - Account Number
+ * @returns {boolean}
+ */
+async function deleteUser(accNumber) {
+  const user = await usersRepository.getUserAccNumber(accNumber);
+
+  // User not found
+  if (!user) {
+    return null;
+  }
+
+  try {
+    await usersRepository.deleteUserAccount(id);
   } catch (err) {
     return null;
   }
