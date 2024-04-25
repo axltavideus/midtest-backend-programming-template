@@ -166,6 +166,14 @@ async function createUserAccount(request, response, next) {
       );
     }
 
+    const numberTaken = await usersService.numberTaken(accNumber);
+    if (numberTaken) {
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'Account Number is already registered'
+      );
+    }
+
     const success = await usersService.createUserAccount(name, email, password,loginAttempt, accNumber, balance, accType);
     if (!success) {
       throw errorResponder(
@@ -204,7 +212,7 @@ async function createTransfer(request, response, next) {
         'Failed to create transfer'
       );
     }
-    
+
     const user = await usersRepository.getUser(id);
     const balance = user.balance;
 

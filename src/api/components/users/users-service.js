@@ -385,11 +385,15 @@ async function updateBalance(identifier, amount) {
       return null;
     }
 
+    console.log('Balance before update:', user.balance);
     user.balance += amount;
+    console.log('Balance after update:', user.balance);
     await user.save();
-
+    console.log('User saved to database');
+    
     return user;
   } catch (err) {
+    console.log('Error updating balance:', err);
     return null;
   }
 }

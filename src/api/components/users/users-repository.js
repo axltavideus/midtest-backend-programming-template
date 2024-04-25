@@ -156,12 +156,12 @@ async function getUserByEmail(email) {
 }
 
 /**
- * Get user by email to prevent duplicate email
- * @param {string} email - Email
+ * Get user by email to prevent duplicate accNumber
+ * @param {string} accNumber - Account Number
  * @returns {Promise}
  */
 async function getUserByAccNumber(accNumber) {
-  return User.findOne({ accNumber });
+  return User.findOne({ accNumber: accNumber });
 }
 
 /**
