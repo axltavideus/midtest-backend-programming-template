@@ -51,7 +51,7 @@ module.exports = (app) => {
     usersControllers.updateUser
   );
 
-  // Update user
+  // Update user account
   route.put(
     '/accounts/:id',
     authenticationMiddleware,
