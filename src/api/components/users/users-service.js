@@ -1,5 +1,5 @@
 const usersRepository = require('./users-repository');
-const { User } = require('../../../models');
+const { User, Transfer } = require('../../../models');
 const { hashPassword, passwordMatched } = require('../../../utils/password');
 
 /**
@@ -269,6 +269,48 @@ async function createUserAccount(name, email, password, loginAttempt, accNumber,
   }
 }
 
+/**
+ * Create new user Account
+ * @param {string} id - ID
+ * @param {string} toAccNumber - Account Number
+ * @param {string} amount - toUserId
+ * @returns {boolean}
+ */
+async function createTransfer(id, toAccNumber, amount) {
+  const transferId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  try { 
+    const toUser = await User.findOne({accNumber: toAccNumber});
+    const fromUser = await usersRepository.getUser(id);
+
+    const newTransfer = new Transfer({
+      transferId: transferId,
+      fromUserId: fromUser,
+      toUserId: toUser._id,
+      amount: amount,
+      timestamp: Date.now(),
+    });
+
+    await newTransfer.save();
+
+    if (!toUser) {
+      return null; // Handle non-existent sender
+    }
+    
+    if (!fromUser) {
+      return null; // Handle non-existent sender
+    }
+
+    await updateBalance(toUser, amount);
+    await updateBalance(fromUser, -amount);
+
+    await newTransfer.save(); // Save the new user document
+
+    return true;
+  } catch (err) {
+    return null;
+  }
+}
+
 
 /**
  * Update existing user
@@ -316,6 +358,40 @@ async function updateUserAccount(id, name, email, accNumber, balance, accType) {
   }
 
   return true;
+}
+
+/**
+ * Update existing user
+ * @param {string} id - User ID
+ * @param {string} name - Name
+ * @param {string} email - Email
+ * @returns {boolean}
+ */
+async function updateBalance(identifier, amount) {
+   try {
+    let user;
+
+    if (typeof identifier === 'number') {// If accNumber
+      user = await User.findOne({ accNumber: identifier });
+    } else if (typeof identifier === 'object' && identifier._id) {
+      // Assuming identifier is a user object with _id property
+      user = identifier;
+    } else {
+      throw new Error('Invalid identifier format. Provide either user ID or account number.');
+    }
+
+    // User not found
+    if (!user) {
+      return null;
+    }
+
+    user.balance += amount;
+    await user.save();
+
+    return user;
+  } catch (err) {
+    return null;
+  }
 }
 
 /**
@@ -438,8 +514,10 @@ module.exports = {
   getUser,
   createUser,
   createUserAccount,
+  createTransfer,
   updateUser,
   updateUserAccount,
+  updateBalance,
   deleteUser,
   deleteUserAccount,
   emailIsRegistered,

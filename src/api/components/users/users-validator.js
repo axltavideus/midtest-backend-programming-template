@@ -53,6 +53,13 @@ module.exports = {
     },
   },
 
+  transfer: {
+    body: {
+      accNumber: joi.number().required().label('accNumber'),
+      amount: joi.number().required().label('Email'),
+    },
+  },
+
   updateUserAccount: {
     body: {
       name: joi.string().min(1).max(100).required().label('Name'),

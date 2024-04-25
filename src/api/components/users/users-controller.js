@@ -185,6 +185,36 @@ async function createUserAccount(request, response, next) {
 }
 
 /**
+ * Handle create user request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function createTransfer(request, response, next) {
+  try {
+    const accNumber = request.body.accNumber;
+    const amount = request.body.amount;
+    const id = request.params.id;
+
+    const success = await usersService.createTransfer(id, accNumber, amount);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to create transfer'
+      );
+    }
+    
+    const user = await usersRepository.getUser(id);
+    const balance = user.balance;
+
+    return response.status(200).json({id, accNumber, balance, amount});
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
  * Handle update user request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -370,6 +400,7 @@ module.exports = {
   getAccountPage,
   createUser,
   createUserAccount,
+  createTransfer,
   updateUser,
   updateUserAccount,
   deleteUser,

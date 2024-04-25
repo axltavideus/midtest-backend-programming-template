@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: http://localhost:5000/api/users?page_number=1&page_size=5&search=email:y&sort=email:desc
+  url: http://localhost:5000/api/users?page_number=1&page_size=5&search=email:admin&sort=email:desc
   body: formUrlEncoded
   auth: none
 }
@@ -13,7 +13,7 @@ get {
 query {
   page_number: 1
   page_size: 5
-  search: email:y
+  search: email:admin
   sort: email:desc
 }
 

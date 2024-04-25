@@ -1,4 +1,5 @@
 const { User } = require('../../../models');
+const { Transfer } = require('../../../models');
 
 /**
  * Get a list of users
@@ -38,6 +39,25 @@ async function createUser(name, email, password) {
     name,
     email,
     password,
+  });
+}
+
+/**
+ * Create new transfer
+ * @param {string} transferId - Transfer ID
+ * @param {string} fromUserID - From User ID
+ * @param {string} toUserID - To User ID
+ * @param {string} amount - Amount
+ * @param {string} timestamp - Time Stamp
+ * @returns {Promise}
+ */
+async function createTransfer(transferId, fromUserId, toUserId, amount, timestamp) {
+  return Transfer.create({
+    transferId,
+    fromUserId,
+    toUserId,
+    amount,
+    timestamp,
   });
 }
 
@@ -160,6 +180,7 @@ module.exports = {
   getUserAccNumber,
   createUser,
   createUserAccount,
+  createTransfer,
   updateUser,
   updateUserAccount,
   deleteUser,

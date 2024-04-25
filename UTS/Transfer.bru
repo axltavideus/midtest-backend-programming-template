@@ -1,0 +1,22 @@
+meta {
+  name: Transfer
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://localhost:5000/api/users/transfers/662a18249d38a85fb8c4f61a
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNjYyNWQ1MGNiYzRmMTE4YTBhYmZmMzE0IiwiaWF0IjoxNzE0MDM0NTI5LCJleHAiOjE3MTQxMjA5Mjl9.XJvHnbq2RdXJre24tnh9RW8JR_DtAjv7fnjVoWwj90I
+}
+
+body:json {
+  {
+    "accNumber":9651768,
+    "amount": 1000
+  }
+}
