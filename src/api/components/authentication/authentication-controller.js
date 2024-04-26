@@ -36,13 +36,12 @@ async function login(request, response, next) {
         logger.info('User '+ users.email +' mencoba login, namun mendapat error 403 karena telah melebihi limit attempt');
         
         //Timeout user
-        await new Promise(resolve => setTimeout(resolve, 30 * 60 * 1000));
-        
+        await new Promise(resolve => setTimeout(resolve, 1 * 60 * 1000));
+        await User.updateOne({ email }, { $set: { loginAttempt: 0 } });
         logger.info('User '+ users.email +' bisa mencoba login kembali karena sudah lebih dari 30 menit sejak pengenaan limit. Attempt di-reset kembali ke 0.');
         
         //Reset loginAttempt after 30 minutes
         loginAttempt = 0;
-        await User.updateOne({ email }, { $set: { loginAttempt: 0 } });
         
         throw errorResponder(
           errorTypes.FORBIDDEN,
