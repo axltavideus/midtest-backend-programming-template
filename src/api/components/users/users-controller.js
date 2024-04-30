@@ -53,7 +53,11 @@ async function getUsersPagination(request, response, next) {
     const page_size = parseInt(request.query.page_size);
     const page_number = parseInt(request.query.page_number);
     const search = request.query.search || '';
-    const sort = request.query.sort;
+    let sort = request.query.sort;
+
+    if (sort == '') {
+      sort = 'email:asc'
+    }
 
     const userPage = await usersService.getUsersPagination(page_number, page_size, search, sort);
 

@@ -1,5 +1,6 @@
 const usersRepository = require('./users-repository');
 const { User, Transfer } = require('../../../models');
+const logger = require('../../../core/logger')('app');
 const { hashPassword, passwordMatched } = require('../../../utils/password');
 
 /**

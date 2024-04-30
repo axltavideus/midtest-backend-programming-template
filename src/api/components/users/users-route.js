@@ -32,13 +32,13 @@ module.exports = (app) => {
     usersControllers.createUserAccount
   );
 
-    // Create transfers between Account
-    route.post(
-      '/transfers/:id',
-      authenticationMiddleware,
-      celebrate(usersValidator.transfer),
-      usersControllers.createTransfer
-    );
+  // Create transfers between Account
+  route.post(
+    '/transfers/:id',
+    authenticationMiddleware,
+    celebrate(usersValidator.transfer),
+    usersControllers.createTransfer
+  );
 
   // Get user detail
   route.get('/:id', authenticationMiddleware, usersControllers.getUser);
